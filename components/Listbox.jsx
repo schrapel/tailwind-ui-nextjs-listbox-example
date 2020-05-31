@@ -24,26 +24,6 @@ function useId() {
   return id;
 }
 
-function useEventListener(eventName, handler, element = window) {
-  const savedHandler = useRef();
-
-  useEffect(() => {
-    savedHandler.current = handler;
-  }, [handler]);
-
-  useEffect(() => {
-    const isSupported = element && element.addEventListener;
-    if (!isSupported) return;
-
-    const eventListener = (event) => savedHandler.current(event);
-    element.addEventListener(eventName, eventListener);
-
-    return () => {
-      element.removeEventListener(eventName, eventListener);
-    };
-  }, [eventName, element]);
-}
-
 function usePrevious(value) {
   const ref = useRef();
 
@@ -217,9 +197,6 @@ export function ListboxButton({ children, ...props }) {
     setData((prevData) => ({ ...prevData, listboxButtonRef, buttonId: id }));
   }, []);
 
-  useEventListener('focus', () => setIsFocused(true), listboxButtonRef.current);
-  useEventListener('blur', () => setIsFocused(false), listboxButtonRef.current);
-
   return createElement('button', {
     children:
       typeof children === 'function' ? createElement(children, { isFocused, isOpen }) : children,
@@ -230,6 +207,8 @@ export function ListboxButton({ children, ...props }) {
     'aria-haspopup': 'listbox',
     'aria-labelledby': `${labelId} ${id}`,
     ...(isOpen ? { 'aria-expanded': 'true' } : {}),
+    onFocus: () => setIsFocused(true),
+    onBlur: () => setIsFocused(false),
     ...props,
   });
 }
@@ -255,28 +234,28 @@ export function ListboxList({ children, ...props }) {
     setData((prevData) => ({ ...prevData, listboxListRef, values }));
   }, []);
 
-  useEventListener(
-    'focusout',
-    (e) => {
+  return createElement('ul', {
+    children,
+    ref: listboxListRef,
+    tabIndex: '-1',
+    role: 'listbox',
+    'aria-activedescendant': getActiveDescendant(),
+    // https://github.com/tailwindui/vue/blob/master/src/Listbox.js#L101
+    // The code never references this so not sure what to map the value to.
+    // 'aria-labelledby': this.context.props.labelledby,
+    style: {
+      display: isOpen ? 'block' : 'none',
+    },
+    onBlur: (e) => {
       if (e.relatedTarget === listboxButtonRef.current) {
         return;
       }
       close();
     },
-    listboxListRef.current,
-  );
-
-  useEventListener(
-    'mouseleave',
-    () => {
+    onMouseLeave: () => {
       setData((prevData) => ({ ...prevData, activeItem: null }));
     },
-    listboxListRef.current,
-  );
-
-  useEventListener(
-    'keydown',
-    (e) => {
+    onKeyDown: (e) => {
       let indexToFocus;
       switch (e.key) {
         case 'Esc':
@@ -321,21 +300,6 @@ export function ListboxList({ children, ...props }) {
           type(e.key);
       }
     },
-    listboxListRef.current,
-  );
-
-  return createElement('ul', {
-    children,
-    ref: listboxListRef,
-    tabIndex: '-1',
-    role: 'listbox',
-    'aria-activedescendant': getActiveDescendant(),
-    // https://github.com/tailwindui/vue/blob/master/src/Listbox.js#L101
-    // The code never references this so not sure what to map the value to.
-    // 'aria-labelledby': this.context.props.labelledby,
-    style: {
-      display: isOpen ? 'block' : 'none',
-    },
     ...props,
   });
 }
@@ -376,26 +340,6 @@ export function ListboxOption({ children, value, ...props }) {
     };
   }, []);
 
-  useEventListener(
-    'click',
-    () => {
-      select(value);
-    },
-    listboxOptionRef.current,
-  );
-
-  useEventListener(
-    'mousemove',
-    () => {
-      if (activeItem === value) {
-        return;
-      }
-
-      setData((prevData) => ({ ...prevData, activeItem: value }));
-    },
-    listboxOptionRef.current,
-  );
-
   return createElement('li', {
     children:
       typeof children === 'function' ? createElement(children, { isActive, isSelected }) : children,
@@ -404,9 +348,17 @@ export function ListboxOption({ children, value, ...props }) {
     role: 'option',
     ...(isSelected
       ? {
-        'aria-selected': true,
-      }
+          'aria-selected': true,
+        }
       : {}),
+    onClick: () => select(value),
+    onMouseMove: () => {
+      if (activeItem === value) {
+        return;
+      }
+
+      setData((prevData) => ({ ...prevData, activeItem: value }));
+    },
     ...props,
   });
 }
