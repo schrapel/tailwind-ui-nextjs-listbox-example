@@ -133,7 +133,7 @@ const useListboxProvider = (value, onChange) => {
     setData((prevData) => ({ ...prevData, typeahead: prevData.typeahead + value }));
 
     const [match] = data.optionRefs.find(([_value, ref]) => {
-      return ref.current.innerText.toLowerCase().startsWith(data.typeahead.toLowerCase());
+      return ref.current.innerText.toLowerCase().includes(data.typeahead.toLowerCase());
     }) || [null];
 
     if (match !== null) {
