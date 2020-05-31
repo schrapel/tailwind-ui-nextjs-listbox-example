@@ -7,7 +7,7 @@ import {
   ListboxOption,
 } from '../components/Listbox';
 
-const wrestlers = [
+const golfers = [
   'Rory McIlroy',
   'Jon Rahm',
   'Brooks Koepka',
@@ -27,17 +27,18 @@ const wrestlers = [
 
 // TODO: Use twin.macro or classNames package for better dynamic class configuration.
 export default function Home() {
-  const [selectedWrestler, setSelectedWrestler] = useState('Tiger Woods');
+  const [selectedGolfer, setSelectedGolfer] = useState('Tiger Woods');
 
   return (
     <div className="p-48 antialiased font-sans text-gray-900">
       <div className="max-w-xs mx-auto">
-        <Listbox value={selectedWrestler} onChange={setSelectedWrestler} className="relative">
-          <ListboxLabel className="sr-only">Select a wrestler</ListboxLabel>
+        <Listbox value={selectedGolfer} onChange={setSelectedGolfer} className="relative">
+          <ListboxLabel className="sr-only">Select a Golfer</ListboxLabel>
           <ListboxButton className="w-full focus:outline-none">
             {({ isFocused, isOpen }) => (
-              <span className={`inline-flex items-center justify-between w-full text-left rounded px-3 py-2 border ${isFocused || isOpen ? 'border-blue-300 shadow-outline-blue' : 'border-gray-300'}`}>
-                {selectedWrestler}
+              <span
+                className={`inline-flex items-center justify-between w-full text-left rounded px-3 py-2 border ${isFocused || isOpen ? 'border-blue-300 shadow-outline-blue' : 'border-gray-300'}`}>
+                {selectedGolfer}
                 <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -49,11 +50,11 @@ export default function Home() {
             )}
           </ListboxButton>
           <ListboxList className="absolute mt-2 w-full max-h-56 overflow-y-auto focus:outline-none shadow rounded-md border py-1">
-            {wrestlers.map((wrestler) => (
-              <ListboxOption key={wrestler} value={wrestler} className="cursor-default select-none">
+            {golfers.map((golfer) => (
+              <ListboxOption key={golfer} value={golfer} className="cursor-default select-none">
                 {({ isActive, isSelected }) => (
                   <div className={`relative px-3 py-2${isActive ? ' bg-red-500 text-white' : ''}`}>
-                    {wrestler}
+                    {golfer}
                     {isSelected && (
                       <span className="absolute inset-y-0 right-0 flex items-center pr-2">
                         <svg
