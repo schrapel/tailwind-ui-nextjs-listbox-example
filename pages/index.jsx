@@ -30,8 +30,8 @@ export default function Home() {
   const [selectedGolfer, setSelectedGolfer] = useState('Tiger Woods');
 
   return (
-    <div className="p-48 antialiased font-sans text-gray-900">
-      <div className="max-w-xs mx-auto">
+    <div className="p-10 antialiased font-sans text-gray-900">
+      <div className="lg:max-w-xs mx-auto">
         <Listbox value={selectedGolfer} onChange={setSelectedGolfer} className="relative">
           <ListboxLabel className="sr-only">Select a Golfer</ListboxLabel>
           <ListboxButton className="w-full focus:outline-none">
