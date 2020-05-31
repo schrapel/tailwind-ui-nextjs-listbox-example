@@ -281,7 +281,7 @@ export function ListboxList({ children, ...props }) {
         case 'Spacebar':
         case ' ':
           e.preventDefault();
-          if (typeahead.value !== '') {
+          if (typeahead !== '') {
             type(' ');
           } else {
             select(activeItem);
